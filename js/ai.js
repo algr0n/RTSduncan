@@ -106,8 +106,7 @@ const GrokAI = (function() {
         });
         
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`API request failed: ${response.status} ${response.statusText}\n${errorText}`);
+            throw new Error(`AI service request failed. Please try again later. (HTTP ${response.status})`);
         }
         
         const data = await response.json();
