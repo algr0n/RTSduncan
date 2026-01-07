@@ -13,6 +13,8 @@ A fully functional web-based chess game featuring integration with xAI's Grok AP
   - Check and checkmate detection
   - Stalemate and draw conditions
 
+- 🎨 **Color Selection**: Choose to play as White or Black at the start of each game
+
 - 🎮 **Intuitive Interface**:
   - Click-to-move gameplay
   - Visual feedback for selected pieces
@@ -20,13 +22,15 @@ A fully functional web-based chess game featuring integration with xAI's Grok AP
   - Move history tracking
   - Game status display
   - Board flip option
+  - Dynamic board orientation based on player color
 
 - 🤖 **Grok AI Integration**:
-  - Play against xAI's Grok AI
+  - Play against xAI's Grok AI (powered by grok-4-1-fast-reasoning model)
   - Intelligent move selection
   - Automatic fallback to random moves if API unavailable
   - Retry logic for failed API calls
   - Visual "AI thinking" indicator
+  - AI automatically plays first when you choose Black
 
 - 📱 **Responsive Design**: Works on desktop, tablet, and mobile devices
 
@@ -45,20 +49,35 @@ The game will work immediately in Player vs Player mode or with random AI moves.
 To play against the Grok AI:
 
 1. Get your API key from [xAI Console](https://console.x.ai/)
-2. Open `js/ai.js` in a text editor
-3. Find the `CONFIG` object at the top of the file
-4. Replace `'your-api-key-here'` with your actual API key:
-   ```javascript
-   const CONFIG = {
-       GROK_API_KEY: 'xai-your-actual-api-key-here',
-       GROK_API_ENDPOINT: 'https://api.x.ai/v1/chat/completions',
-       AI_ENABLED: true,
-       MAX_RETRIES: 3,
-       RETRY_DELAY: 1000,
-       MODEL: 'grok-beta'
-   };
+
+2. **Option A (Recommended)**: Add a configuration script to `index.html` before the game scripts:
+   ```html
+   <!-- Add this before the game scripts at the end of the file -->
+   <script>
+       window.CHESS_CONFIG = {
+           GROK_API_KEY: 'xai-your-actual-api-key-here'
+       };
+   </script>
+   
+   <!-- Chess.js library -->
+   <script src="js/chess.min.js"></script>
+   <!-- ... rest of scripts -->
    ```
-5. Save the file and refresh your browser
+
+3. **Option B**: Configure programmatically after the page loads via browser console:
+   ```javascript
+   ChessGame.configure({
+       GROK_API_KEY: 'xai-your-actual-api-key-here'
+   });
+   ```
+
+4. Save the file and refresh your browser
+
+**Important Security Notes:**
+- The API key should **NOT** be hardcoded in the JavaScript files
+- Never commit API keys to version control
+- Consider using environment variables for production deployments
+- The game will fall back to random moves if no API key is configured
 
 ## How to Get Grok API Access
 
@@ -83,8 +102,10 @@ To play against the Grok AI:
 - **Flip Board**: Rotate the board 180 degrees
 
 ### Game Modes
-- **Player vs AI** (default): You play as White, AI plays as Black
-- **Player vs Player**: Play against another human (AI disabled)
+- **Player vs AI** (default): Choose your color at the start
+  - Play as White: You move first, AI plays as Black
+  - Play as Black: AI (White) moves first
+- **Player vs Player**: Disable AI in configuration for two-player mode
 
 ## Configuration
 

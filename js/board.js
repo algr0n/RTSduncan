@@ -48,10 +48,12 @@ const ChessBoard = (function() {
      * Initialize the chess board
      * @param {string} containerId - ID of the container element
      * @param {function} clickHandler - Function to call when a square is clicked
+     * @param {boolean} flipInitial - Whether to flip the board initially (for black player)
      */
-    function init(containerId, clickHandler) {
+    function init(containerId, clickHandler, flipInitial = false) {
         boardElement = document.getElementById(containerId);
         onSquareClick = clickHandler;
+        isFlipped = flipInitial;
         createBoard();
     }
     
@@ -64,14 +66,15 @@ const ChessBoard = (function() {
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 const square = document.createElement('div');
-                const displayRow = isFlipped ? row : 7 - row;
-                const displayCol = isFlipped ? 7 - col : col;
-                
-                const file = String.fromCharCode(97 + displayCol); // a-h
-                const rank = displayRow + 1; // 1-8
+                // When not flipped (white's perspective): row 0 = rank 8, row 7 = rank 1
+                // When flipped (black's perspective): row 0 = rank 1, row 7 = rank 8
+                const rank = isFlipped ? row + 1 : 8 - row;
+                const file = String.fromCharCode(97 + (isFlipped ? 7 - col : col)); // a-h
                 const squareName = file + rank;
                 
-                square.className = 'square ' + ((displayRow + displayCol) % 2 === 0 ? 'dark' : 'light');
+                // Color pattern remains consistent
+                const isLightSquare = (row + col) % 2 === 1;
+                square.className = 'square ' + (isLightSquare ? 'light' : 'dark');
                 square.dataset.square = squareName;
                 
                 square.addEventListener('click', () => {
@@ -92,25 +95,25 @@ const ChessBoard = (function() {
     function render(game) {
         const board = game.board();
         
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
-                const displayRow = isFlipped ? row : 7 - row;
-                const displayCol = isFlipped ? 7 - col : col;
-                
-                const file = String.fromCharCode(97 + displayCol);
-                const rank = displayRow + 1;
-                const squareName = file + rank;
-                
-                const square = boardElement.querySelector(`[data-square="${squareName}"]`);
-                const piece = board[displayRow][displayCol];
-                
-                if (piece) {
-                    square.innerHTML = renderPiece(piece);
-                } else {
-                    square.innerHTML = '';
-                }
+        // Clear all squares first
+        const squares = boardElement.querySelectorAll('.square');
+        squares.forEach(square => {
+            const squareName = square.dataset.square;
+            const file = squareName.charCodeAt(0) - 97; // a-h -> 0-7
+            const rank = parseInt(squareName[1]) - 1; // 1-8 -> 0-7
+            
+            // board[0] is rank 8, board[7] is rank 1
+            const boardRow = 7 - rank;
+            const boardCol = file;
+            
+            const piece = board[boardRow][boardCol];
+            
+            if (piece) {
+                square.innerHTML = renderPiece(piece);
+            } else {
+                square.innerHTML = '';
             }
-        }
+        });
         
         updateHighlights();
     }
@@ -203,6 +206,17 @@ const ChessBoard = (function() {
         return isFlipped;
     }
     
+    /**
+     * Set the board orientation
+     * @param {boolean} flipped - Whether the board should be flipped
+     */
+    function setOrientation(flipped) {
+        if (isFlipped !== flipped) {
+            isFlipped = flipped;
+            createBoard();
+        }
+    }
+    
     // Public API
     return {
         init,
@@ -210,6 +224,7 @@ const ChessBoard = (function() {
         setSelectedSquare,
         clearSelection,
         flip,
-        getFlipState
+        getFlipState,
+        setOrientation
     };
 })();
