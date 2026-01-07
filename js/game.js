@@ -198,7 +198,7 @@ const ChessGame = (function() {
             }
         } catch (error) {
             console.error('Error during AI move:', error);
-            updateStatus('AI Error: ' + error.message);
+            updateStatus('AI Error: Unable to calculate a move at this time. Please try again.');
         } finally {
             isAIThinking = false;
             showAIThinking(false);
