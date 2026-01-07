@@ -24,6 +24,7 @@ const ChessGame = (function() {
     let moveHistory = []; // Array of {move, fen, moveNumber}
     let isViewingHistory = false;
     let currentViewIndex = -1; // -1 means viewing current position
+    let historyClickListenerAttached = false;
     
     /**
      * Initialize the game
@@ -197,9 +198,6 @@ const ChessGame = (function() {
      * @param {string} to - Destination square
      */
     function attemptMove(from, to) {
-        // Store FEN before the move
-        const fenBeforeMove = game.fen();
-        
         // Check if this is a pawn promotion
         const piece = game.get(from);
         const isPromotion = piece && piece.type === 'p' && 
@@ -393,14 +391,17 @@ const ChessGame = (function() {
         
         historyElement.innerHTML = html;
         
-        // Add click listeners to moves
-        const moveItems = historyElement.querySelectorAll('.move-item');
-        moveItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const index = parseInt(this.dataset.index);
-                viewMoveAtIndex(index);
+        // Setup event delegation for move clicks (only once)
+        if (!historyClickListenerAttached) {
+            historyElement.addEventListener('click', function(e) {
+                const moveItem = e.target.closest('.move-item');
+                if (moveItem) {
+                    const index = parseInt(moveItem.dataset.index);
+                    viewMoveAtIndex(index);
+                }
             });
-        });
+            historyClickListenerAttached = true;
+        }
         
         // Scroll to selected move or bottom
         if (currentViewIndex >= 0) {
@@ -526,6 +527,11 @@ const ChessGame = (function() {
             selectedSquare = null;
             isAIThinking = false;
             showAIThinking(false);
+            
+            // Reset history navigation state
+            moveHistory = [];
+            isViewingHistory = false;
+            currentViewIndex = -1;
             
             // Show color selection modal again
             showColorSelectionModal();
