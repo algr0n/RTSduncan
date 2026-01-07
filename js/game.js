@@ -324,10 +324,10 @@ const ChessGame = (function() {
         // If viewing history, show that instead
         if (isViewingHistory) {
             turnElement.textContent = 'Viewing History';
-            const moveNum = currentViewIndex >= 0 ? Math.floor(currentViewIndex / 2) + 1 : 0;
-            const isWhite = currentViewIndex >= 0 ? (currentViewIndex % 2 === 0) : true;
+            const moveData = moveHistory[currentViewIndex];
+            const isWhite = currentViewIndex % 2 === 0;
             const moveSide = isWhite ? 'White' : 'Black';
-            statusElement.textContent = `Move ${moveNum}. ${moveSide}`;
+            statusElement.textContent = `Move ${moveData.moveNumber}. ${moveSide}`;
             statusElement.style.color = '#3498db';
             return;
         }
