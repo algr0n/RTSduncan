@@ -9,7 +9,7 @@ const GrokAI = (function() {
     // Configuration
     const CONFIG = {
         // Get your API key from: https://console.x.ai/
-        GROK_API_KEY: 'your-api-key-here',
+        GROK_API_KEY: 'xai-qMFj1SKpNs70RZOqyk9jX06f6lM8CZaVU6NkBrw6TdYwgYu7vSxi1AvP40uWBFAgFuDJjwPs99JIvx8i',
         GROK_API_ENDPOINT: 'https://api.x.ai/v1/chat/completions',
         AI_ENABLED: true,
         MAX_RETRIES: 3,
