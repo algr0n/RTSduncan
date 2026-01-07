@@ -304,7 +304,7 @@ header h1 {
     font-weight: 700;
 }
 
-.btn-current:hover {
+.btn-current:hover:not(:disabled) {
     background: #2980b9;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
