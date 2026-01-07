@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game with Grok AI</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>♔ Chess Game with Grok AI ♚</h1>
+        </header>
+        
+        <div class="game-container">
+            <div class="left-panel">
+                <div class="status-panel">
+                    <h2>Game Status</h2>
+                    <div class="status-item">
+                        <span class="label">Turn:</span>
+                        <span id="current-turn" class="value">White</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">Status:</span>
+                        <span id="game-status" class="value">Ready</span>
+                    </div>
+                    <div id="ai-thinking" class="ai-thinking hidden">
+                        <span class="spinner">⟳</span> AI is thinking...
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="new-game-btn" class="btn btn-primary">New Game</button>
+                    <button id="flip-board-btn" class="btn btn-secondary">Flip Board</button>
+                </div>
+                
+                <div class="move-history-panel">
+                    <h2>Move History</h2>
+                    <div id="move-history" class="move-history"></div>
+                </div>
+            </div>
+            
+            <div class="board-container">
+                <div id="chess-board" class="chess-board"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Built with <a href="https://github.com/jhlywa/chess.js" target="_blank">chess.js</a> library</p>
+            <p>AI powered by Grok (xAI)</p>
+        </footer>
+    </div>
+    
+    <!-- Chess.js library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    
+    <!-- Game modules -->
+    <script src="js/board.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
