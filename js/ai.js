@@ -8,13 +8,30 @@ const GrokAI = (function() {
     
     // Configuration
     const CONFIG = {
+        // API Key Configuration:
+        // For security reasons, the API key should NOT be hardcoded in the source code.
+        // 
+        // Option 1 (Recommended): Set via global config before scripts load
+        //   Add this to your HTML before the script tags:
+        //   <script>
+        //     window.CHESS_CONFIG = {
+        //       GROK_API_KEY: 'xai-your-actual-api-key-here'
+        //     };
+        //   </script>
+        //
+        // Option 2: Set via environment variable (if using a build process)
+        //   Configure your build tool to inject: process.env.GROK_API_KEY
+        //
+        // Option 3: Configure programmatically after page load
+        //   ChessGame.configure({ GROK_API_KEY: 'xai-your-api-key' });
+        //
         // Get your API key from: https://console.x.ai/
-        GROK_API_KEY: 'xai-qMFj1SKpNs70RZOqyk9jX06f6lM8CZaVU6NkBrw6TdYwgYu7vSxi1AvP40uWBFAgFuDJjwPs99JIvx8i',
+        GROK_API_KEY: (typeof window !== 'undefined' && window.CHESS_CONFIG && window.CHESS_CONFIG.GROK_API_KEY) || '',
         GROK_API_ENDPOINT: 'https://api.x.ai/v1/chat/completions',
         AI_ENABLED: true,
         MAX_RETRIES: 3,
         RETRY_DELAY: 1000, // milliseconds
-        MODEL: 'grok-beta' // or other available model
+        MODEL: 'grok-4-1-fast-reasoning' // Updated to fast reasoning model
     };
     
     /**

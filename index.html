@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Color Selection Modal -->
+    <div id="color-modal" class="modal">
+        <div class="modal-content">
+            <h2>Choose Your Color</h2>
+            <p>Select which side you want to play as:</p>
+            <div class="color-buttons">
+                <button id="choose-white" class="color-btn white-btn">
+                    <span class="piece-icon">♔</span>
+                    <span>Play as White</span>
+                    <span class="color-desc">You move first</span>
+                </button>
+                <button id="choose-black" class="color-btn black-btn">
+                    <span class="piece-icon">♚</span>
+                    <span>Play as Black</span>
+                    <span class="color-desc">AI moves first</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>♔ Chess Game with Grok AI ♚</h1>

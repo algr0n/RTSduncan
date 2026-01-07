@@ -48,10 +48,12 @@ const ChessBoard = (function() {
      * Initialize the chess board
      * @param {string} containerId - ID of the container element
      * @param {function} clickHandler - Function to call when a square is clicked
+     * @param {boolean} flipInitial - Whether to flip the board initially (for black player)
      */
-    function init(containerId, clickHandler) {
+    function init(containerId, clickHandler, flipInitial = false) {
         boardElement = document.getElementById(containerId);
         onSquareClick = clickHandler;
+        isFlipped = flipInitial;
         createBoard();
     }
     
@@ -203,6 +205,17 @@ const ChessBoard = (function() {
         return isFlipped;
     }
     
+    /**
+     * Set the board orientation
+     * @param {boolean} flipped - Whether the board should be flipped
+     */
+    function setOrientation(flipped) {
+        if (isFlipped !== flipped) {
+            isFlipped = flipped;
+            createBoard();
+        }
+    }
+    
     // Public API
     return {
         init,
@@ -210,6 +223,7 @@ const ChessBoard = (function() {
         setSelectedSquare,
         clearSelection,
         flip,
-        getFlipState
+        getFlipState,
+        setOrientation
     };
 })();

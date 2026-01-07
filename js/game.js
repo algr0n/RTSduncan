@@ -22,15 +22,56 @@ const ChessGame = (function() {
      * Initialize the game
      */
     function init() {
+        // Show color selection modal
+        showColorSelectionModal();
+    }
+    
+    /**
+     * Show the color selection modal
+     */
+    function showColorSelectionModal() {
+        const modal = document.getElementById('color-modal');
+        modal.classList.add('show');
+        
+        // Setup button listeners
+        document.getElementById('choose-white').addEventListener('click', () => {
+            startGameWithColor('white');
+        });
+        
+        document.getElementById('choose-black').addEventListener('click', () => {
+            startGameWithColor('black');
+        });
+    }
+    
+    /**
+     * Hide the color selection modal
+     */
+    function hideColorSelectionModal() {
+        const modal = document.getElementById('color-modal');
+        modal.classList.remove('show');
+    }
+    
+    /**
+     * Start the game with the selected color
+     * @param {string} color - 'white' or 'black'
+     */
+    function startGameWithColor(color) {
+        CONFIG.PLAYER_COLOR = color;
+        hideColorSelectionModal();
+        
         // Initialize chess.js game
         game = new Chess();
         
-        // Initialize board
-        ChessBoard.init('chess-board', handleSquareClick);
+        // Initialize board with correct orientation
+        // If player is black, flip the board
+        const shouldFlip = (color === 'black');
+        ChessBoard.init('chess-board', handleSquareClick, shouldFlip);
         ChessBoard.render(game);
         
-        // Setup event listeners
-        setupEventListeners();
+        // Setup event listeners (only once)
+        if (!document.getElementById('new-game-btn').hasAttribute('data-listener-attached')) {
+            setupEventListeners();
+        }
         
         // Update UI
         updateStatus();
@@ -46,8 +87,14 @@ const ChessGame = (function() {
      * Setup event listeners for controls
      */
     function setupEventListeners() {
-        document.getElementById('new-game-btn').addEventListener('click', newGame);
-        document.getElementById('flip-board-btn').addEventListener('click', flipBoard);
+        const newGameBtn = document.getElementById('new-game-btn');
+        const flipBoardBtn = document.getElementById('flip-board-btn');
+        
+        newGameBtn.addEventListener('click', newGame);
+        flipBoardBtn.addEventListener('click', flipBoard);
+        
+        // Mark as attached to prevent duplicate listeners
+        newGameBtn.setAttribute('data-listener-attached', 'true');
     }
     
     /**
@@ -284,20 +331,13 @@ const ChessGame = (function() {
      */
     function newGame() {
         if (confirm('Start a new game?')) {
-            game = new Chess();
+            // Reset game state
             selectedSquare = null;
             isAIThinking = false;
-            
-            ChessBoard.clearSelection();
-            ChessBoard.render(game);
-            updateStatus();
-            updateMoveHistory();
             showAIThinking(false);
             
-            // If player is black, AI makes first move
-            if (CONFIG.PLAYER_COLOR === 'black' && CONFIG.AI_ENABLED) {
-                setTimeout(() => makeAIMove(), CONFIG.AI_DELAY);
-            }
+            // Show color selection modal again
+            showColorSelectionModal();
         }
     }
     
