@@ -111,8 +111,10 @@ ChessGame.configure({
 - **HTML5**: Structure and layout
 - **CSS3**: Styling with modern flexbox/grid
 - **Vanilla JavaScript (ES6+)**: Game logic and interactivity
-- **[chess.js](https://github.com/jhlywa/chess.js)**: Chess rules engine and move validation
+- **[chess.js](https://github.com/jhlywa/chess.js) v0.10.3**: Chess rules engine and move validation (included locally)
 - **xAI Grok API**: AI opponent moves
+
+**Note**: The chess.js library is included locally in `js/chess.min.js`. No CDN dependencies required!
 
 ## Project Structure
 
@@ -122,12 +124,14 @@ ChessGame.configure({
 ├── css/
 │   └── style.css       # Complete game styling
 ├── js/
+│   ├── chess.min.js    # Chess.js library (v0.10.3)
 │   ├── board.js        # Board rendering and UI interactions
 │   ├── game.js         # Game logic and state management
 │   └── ai.js           # Grok AI integration
 ├── assets/
 │   ├── pieces/         # Chess piece images (placeholder for custom assets)
 │   └── sounds/         # Game sounds (placeholder)
+├── package.json        # NPM dependencies (chess.js)
 ├── README.md           # This file
 └── ASSETS.md           # Guide for creating custom chess piece assets
 ```
