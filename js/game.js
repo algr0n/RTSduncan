@@ -17,6 +17,8 @@ const ChessGame = (function() {
     let selectedSquare = null;
     let gameMode = 'player-vs-ai'; // 'player-vs-ai', 'player-vs-player', 'ai-vs-ai'
     let isAIThinking = false;
+    let colorModalListenersAttached = false;
+    let gameControlListenersAttached = false;
     
     /**
      * Initialize the game
@@ -33,14 +35,18 @@ const ChessGame = (function() {
         const modal = document.getElementById('color-modal');
         modal.classList.add('show');
         
-        // Setup button listeners
-        document.getElementById('choose-white').addEventListener('click', () => {
-            startGameWithColor('white');
-        });
-        
-        document.getElementById('choose-black').addEventListener('click', () => {
-            startGameWithColor('black');
-        });
+        // Setup button listeners only once
+        if (!colorModalListenersAttached) {
+            document.getElementById('choose-white').addEventListener('click', () => {
+                startGameWithColor('white');
+            });
+            
+            document.getElementById('choose-black').addEventListener('click', () => {
+                startGameWithColor('black');
+            });
+            
+            colorModalListenersAttached = true;
+        }
     }
     
     /**
@@ -68,10 +74,8 @@ const ChessGame = (function() {
         ChessBoard.init('chess-board', handleSquareClick, shouldFlip);
         ChessBoard.render(game);
         
-        // Setup event listeners (only once)
-        if (!document.getElementById('new-game-btn').hasAttribute('data-listener-attached')) {
-            setupEventListeners();
-        }
+        // Setup event listeners for game controls (only once)
+        setupEventListeners();
         
         // Update UI
         updateStatus();
@@ -87,14 +91,17 @@ const ChessGame = (function() {
      * Setup event listeners for controls
      */
     function setupEventListeners() {
+        if (gameControlListenersAttached) {
+            return; // Already attached
+        }
+        
         const newGameBtn = document.getElementById('new-game-btn');
         const flipBoardBtn = document.getElementById('flip-board-btn');
         
         newGameBtn.addEventListener('click', newGame);
         flipBoardBtn.addEventListener('click', flipBoard);
         
-        // Mark as attached to prevent duplicate listeners
-        newGameBtn.setAttribute('data-listener-attached', 'true');
+        gameControlListenersAttached = true;
     }
     
     /**
