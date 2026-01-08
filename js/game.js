@@ -20,6 +20,12 @@ const ChessGame = (function() {
     let colorModalListenersAttached = false;
     let gameControlListenersAttached = false;
     
+    // History navigation state
+    let moveHistory = []; // Array of {move, fen, moveNumber}
+    let isViewingHistory = false;
+    let currentViewIndex = -1; // -1 means viewing current position
+    let historyClickListenerAttached = false;
+    
     /**
      * Initialize the game
      */
@@ -68,6 +74,11 @@ const ChessGame = (function() {
         // Initialize chess.js game
         game = new Chess();
         
+        // Reset history navigation state
+        moveHistory = [];
+        isViewingHistory = false;
+        currentViewIndex = -1;
+        
         // Initialize board with correct orientation
         // If player is black, flip the board
         const shouldFlip = (color === 'black');
@@ -80,6 +91,7 @@ const ChessGame = (function() {
         // Update UI
         updateStatus();
         updateMoveHistory();
+        updateHistoryNavButtons();
         
         // If player is black, AI makes first move
         if (CONFIG.PLAYER_COLOR === 'black' && CONFIG.AI_ENABLED) {
@@ -97,9 +109,15 @@ const ChessGame = (function() {
         
         const newGameBtn = document.getElementById('new-game-btn');
         const flipBoardBtn = document.getElementById('flip-board-btn');
+        const prevMoveBtn = document.getElementById('prev-move-btn');
+        const nextMoveBtn = document.getElementById('next-move-btn');
+        const backToCurrentBtn = document.getElementById('back-to-current-btn');
         
         newGameBtn.addEventListener('click', newGame);
         flipBoardBtn.addEventListener('click', flipBoard);
+        prevMoveBtn.addEventListener('click', showPreviousMove);
+        nextMoveBtn.addEventListener('click', showNextMove);
+        backToCurrentBtn.addEventListener('click', returnToCurrent);
         
         gameControlListenersAttached = true;
     }
@@ -109,6 +127,11 @@ const ChessGame = (function() {
      * @param {string} square - Square name (e.g., 'e4')
      */
     function handleSquareClick(square) {
+        // Don't allow moves while viewing history
+        if (isViewingHistory) {
+            return;
+        }
+        
         // Don't allow moves while AI is thinking
         if (isAIThinking) {
             return;
@@ -188,11 +211,20 @@ const ChessGame = (function() {
         });
         
         if (move) {
+            // Store the move in history with FEN after the move
+            const moveNumber = Math.floor(moveHistory.length / 2) + 1;
+            moveHistory.push({
+                move: move,
+                fen: game.fen(),
+                moveNumber: moveNumber
+            });
+            
             // Move was successful
             deselectSquare();
             ChessBoard.render(game);
             updateStatus();
             updateMoveHistory();
+            updateHistoryNavButtons();
             
             // If playing against AI, make AI move after a delay
             if (gameMode === 'player-vs-ai' && CONFIG.AI_ENABLED && !game.game_over()) {
@@ -244,9 +276,18 @@ const ChessGame = (function() {
             });
             
             if (move) {
+                // Store the move in history
+                const moveNumber = Math.floor(moveHistory.length / 2) + 1;
+                moveHistory.push({
+                    move: move,
+                    fen: game.fen(),
+                    moveNumber: moveNumber
+                });
+                
                 ChessBoard.render(game);
                 updateStatus();
                 updateMoveHistory();
+                updateHistoryNavButtons();
             } else {
                 console.error('AI attempted invalid move:', uciMove);
             }
@@ -280,6 +321,17 @@ const ChessGame = (function() {
         const turnElement = document.getElementById('current-turn');
         const statusElement = document.getElementById('game-status');
         
+        // If viewing history, show that instead
+        if (isViewingHistory) {
+            turnElement.textContent = 'Viewing History';
+            const moveData = moveHistory[currentViewIndex];
+            const isWhite = currentViewIndex % 2 === 0;
+            const moveSide = isWhite ? 'White' : 'Black';
+            statusElement.textContent = `Move ${moveData.moveNumber}. ${moveSide}`;
+            statusElement.style.color = '#3498db';
+            return;
+        }
+        
         // Update turn
         const turn = game.turn() === 'w' ? 'White' : 'Black';
         turnElement.textContent = turn;
@@ -311,26 +363,159 @@ const ChessGame = (function() {
      */
     function updateMoveHistory() {
         const historyElement = document.getElementById('move-history');
-        const history = game.history({ verbose: true });
         
-        if (history.length === 0) {
+        if (moveHistory.length === 0) {
             historyElement.innerHTML = '<div style="color: #999; font-style: italic;">No moves yet</div>';
             return;
         }
         
         let html = '';
-        for (let i = 0; i < history.length; i += 2) {
+        for (let i = 0; i < moveHistory.length; i += 2) {
             const moveNumber = Math.floor(i / 2) + 1;
-            const whiteMove = history[i].san;
-            const blackMove = history[i + 1] ? history[i + 1].san : '';
+            const whiteMove = moveHistory[i].move.san;
+            const blackMove = moveHistory[i + 1] ? moveHistory[i + 1].move.san : '';
             
-            html += `<div class="move-entry">${moveNumber}. ${whiteMove} ${blackMove}</div>`;
+            const whiteClass = currentViewIndex === i ? 'selected' : '';
+            const blackClass = currentViewIndex === i + 1 ? 'selected' : '';
+            
+            html += `<div class="move-entry">
+                <span class="move-number">${moveNumber}.</span>
+                <span class="move-item ${whiteClass}" data-index="${i}">${whiteMove}</span>`;
+            
+            if (blackMove) {
+                html += `<span class="move-item ${blackClass}" data-index="${i + 1}">${blackMove}</span>`;
+            }
+            
+            html += `</div>`;
         }
         
         historyElement.innerHTML = html;
         
-        // Scroll to bottom
-        historyElement.scrollTop = historyElement.scrollHeight;
+        // Setup event delegation for move clicks (only once)
+        if (!historyClickListenerAttached) {
+            historyElement.addEventListener('click', function(e) {
+                const moveItem = e.target.closest('.move-item');
+                if (moveItem) {
+                    const index = parseInt(moveItem.dataset.index);
+                    viewMoveAtIndex(index);
+                }
+            });
+            historyClickListenerAttached = true;
+        }
+        
+        // Scroll to selected move or bottom
+        if (currentViewIndex >= 0) {
+            const selectedMove = historyElement.querySelector('.move-item.selected');
+            if (selectedMove) {
+                selectedMove.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        } else {
+            historyElement.scrollTop = historyElement.scrollHeight;
+        }
+    }
+    
+    /**
+     * View a specific move in the history
+     * @param {number} index - Index in the move history array
+     */
+    function viewMoveAtIndex(index) {
+        if (index < 0 || index >= moveHistory.length) {
+            return;
+        }
+        
+        isViewingHistory = true;
+        currentViewIndex = index;
+        
+        // Load the position at this index
+        const fen = moveHistory[index].fen;
+        game.load(fen);
+        
+        // Update the board and UI
+        ChessBoard.render(game);
+        updateStatus();
+        updateMoveHistory();
+        updateHistoryNavButtons();
+    }
+    
+    /**
+     * Show the previous move in history
+     */
+    function showPreviousMove() {
+        if (!isViewingHistory) {
+            // Start viewing from the last move
+            if (moveHistory.length > 0) {
+                viewMoveAtIndex(moveHistory.length - 1);
+            }
+        } else if (currentViewIndex > 0) {
+            viewMoveAtIndex(currentViewIndex - 1);
+        }
+    }
+    
+    /**
+     * Show the next move in history
+     */
+    function showNextMove() {
+        if (isViewingHistory && currentViewIndex < moveHistory.length - 1) {
+            viewMoveAtIndex(currentViewIndex + 1);
+        } else if (isViewingHistory && currentViewIndex === moveHistory.length - 1) {
+            returnToCurrent();
+        }
+    }
+    
+    /**
+     * Return to the current game position
+     */
+    function returnToCurrent() {
+        if (!isViewingHistory) {
+            return;
+        }
+        
+        isViewingHistory = false;
+        currentViewIndex = -1;
+        
+        // Load the current position (last move in history or starting position)
+        if (moveHistory.length > 0) {
+            const currentFen = moveHistory[moveHistory.length - 1].fen;
+            game.load(currentFen);
+        } else {
+            game.reset();
+        }
+        
+        // Update the board and UI
+        ChessBoard.render(game);
+        updateStatus();
+        updateMoveHistory();
+        updateHistoryNavButtons();
+    }
+    
+    /**
+     * Update the state of history navigation buttons
+     */
+    function updateHistoryNavButtons() {
+        const prevBtn = document.getElementById('prev-move-btn');
+        const nextBtn = document.getElementById('next-move-btn');
+        const backBtn = document.getElementById('back-to-current-btn');
+        
+        if (prevBtn && nextBtn && backBtn) {
+            // Show/hide back to current button
+            if (isViewingHistory) {
+                backBtn.style.display = 'block';
+            } else {
+                backBtn.style.display = 'none';
+            }
+            
+            // Enable/disable navigation buttons
+            if (moveHistory.length === 0) {
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+            } else if (!isViewingHistory) {
+                prevBtn.disabled = false;
+                nextBtn.disabled = true;
+            } else {
+                prevBtn.disabled = currentViewIndex <= 0;
+                nextBtn.disabled = currentViewIndex >= moveHistory.length - 1;
+            }
+        }
     }
     
     /**
@@ -342,6 +527,11 @@ const ChessGame = (function() {
             selectedSquare = null;
             isAIThinking = false;
             showAIThinking(false);
+            
+            // Reset history navigation state
+            moveHistory = [];
+            isViewingHistory = false;
+            currentViewIndex = -1;
             
             // Show color selection modal again
             showColorSelectionModal();

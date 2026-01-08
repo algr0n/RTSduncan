@@ -237,12 +237,18 @@ header h1 {
     margin-bottom: 10px;
 }
 
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
 .btn-primary {
     background: #667eea;
     color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
     background: #5568d3;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
@@ -253,10 +259,55 @@ header h1 {
     color: white;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
     background: #653a8a;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+}
+
+/* History Controls */
+.history-controls {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+}
+
+.history-controls h3 {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.history-nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-nav {
+    background: #95a5a6;
+    color: white;
+    font-size: 0.9rem;
+    padding: 10px 15px;
+}
+
+.btn-nav:hover:not(:disabled) {
+    background: #7f8c8d;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(149, 165, 166, 0.4);
+}
+
+.btn-current {
+    background: #3498db;
+    color: white;
+    font-weight: 700;
+}
+
+.btn-current:hover:not(:disabled) {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
 }
 
 /* Move History */
@@ -300,10 +351,39 @@ header h1 {
     margin: 2px 0;
     background: #f8f9fa;
     border-radius: 3px;
+    display: flex;
+    gap: 10px;
 }
 
 .move-entry:hover {
     background: #e9ecef;
+}
+
+.move-number {
+    font-weight: bold;
+    color: #667eea;
+    min-width: 30px;
+}
+
+.move-item {
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 50px;
+    text-align: center;
+}
+
+.move-item:hover {
+    background: #d1d8ff;
+    transform: scale(1.05);
+}
+
+.move-item.selected {
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(102, 126, 234, 0.4);
 }
 
 /* Chess Board */
