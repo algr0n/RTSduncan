@@ -30,16 +30,16 @@ A fully functional web-based chess game featuring multiple AI opponents includin
   - **Human**: Local player input
 
 - 🎯 **Difficulty Levels**: Each AI supports 4 difficulty levels:
-  - **Beginner**: Easy for new players
-  - **Intermediate**: Balanced gameplay
-  - **Advanced**: Challenging strategic play
-  - **Master**: Maximum strength
+  - **Beginner**: ≈1000-1200 ELO - Easy for new players, makes some mistakes
+  - **Intermediate**: ≈1400-1600 ELO - Balanced gameplay with solid moves
+  - **Advanced**: ≈1800-2000 ELO - Challenging strategic and tactical play
+  - **Master**: ≈2400+ ELO - Maximum strength, near-perfect play
 
 - ⚙️ **Flexible Game Modes**:
   - **Player vs Stockfish**: Classic engine opponent
   - **Player vs Grok AI**: AI-powered opponent
-  - **Stockfish vs Grok**: Watch AI battle
-  - **Custom Setup**: Configure both sides independently
+  - **Stockfish vs Grok**: Watch AI battle (either can play as white or black)
+  - **Custom Setup**: Configure both sides independently with any AI as white or black
   - **AI vs AI**: Watch computer games with adjustable speed
 
 ### Advanced Features
@@ -201,12 +201,14 @@ Currently uses Unicode chess symbols (♔♕♖♗♘♙♚♛♜♝♞♟) for 
 #### Stockfish Engine
 - Uses UCI (Universal Chess Interface) protocol
 - Skill level mapping by difficulty:
-  - Beginner: Level 3 (depth 3)
-  - Intermediate: Level 10 (depth 8)
-  - Advanced: Level 15 (depth 12)
-  - Master: Level 20 (depth 18)
+  - Beginner: Level 5 (depth 5, ≈1000-1200 ELO) - For new players, basic tactical vision
+  - Intermediate: Level 10 (depth 10, ≈1400-1600 ELO) - Solid play, sees 5 moves ahead
+  - Advanced: Level 15 (depth 15, ≈1800-2000 ELO) - Strong tactical and positional play
+  - Master: Level 20 (depth 20, ≈2400+ ELO) - Deep calculation, near-perfect play
+- Uses UCI_LimitStrength and UCI_Elo for beginner/intermediate to ensure appropriate difficulty
 - Validates all moves against legal move list
 - Falls back gracefully if engine unavailable
+- Can be assigned to play as either white or black
 
 #### Grok AI
 - Sends board state to Grok API in FEN notation
@@ -219,6 +221,7 @@ Currently uses Unicode chess symbols (♔♕♖♗♘♙♚♛♜♝♞♟) for 
 - Validates returned move against legal moves
 - Falls back to random legal move if API fails or returns invalid move
 - Includes retry logic (3 attempts by default)
+- Can be assigned to play as either white or black
 
 ### AI Manager
 - Unified interface for all AI providers

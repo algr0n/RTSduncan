@@ -16,10 +16,10 @@ const StockfishEngine = (function() {
         TIMEOUT: 30000, // 30 seconds
         // Difficulty to skill level mapping
         SKILL_LEVELS: {
-            beginner: 3,      // Skill level 1-5
-            intermediate: 10, // Skill level 8-12
-            advanced: 15,     // Skill level 13-17
-            master: 20        // Skill level 18-20
+            beginner: 5,      // Skill level 5 (~1000-1200 ELO)
+            intermediate: 10, // Skill level 10 (~1400-1600 ELO)
+            advanced: 15,     // Skill level 15 (~1800-2000 ELO)
+            master: 20        // Skill level 20 (~2400+ ELO)
         }
     };
     
@@ -248,6 +248,17 @@ const StockfishEngine = (function() {
             // Set skill level
             sendCommand(`setoption name Skill Level value ${skillLevel}`);
             
+            // Apply ELO limiting for beginner and intermediate
+            if (difficulty === 'beginner') {
+                sendCommand('setoption name UCI_LimitStrength value true');
+                sendCommand('setoption name UCI_Elo value 1200');
+            } else if (difficulty === 'intermediate') {
+                sendCommand('setoption name UCI_LimitStrength value true');
+                sendCommand('setoption name UCI_Elo value 1600');
+            } else {
+                sendCommand('setoption name UCI_LimitStrength value false');
+            }
+            
             // Set position
             sendCommand(`position fen ${fen}`);
             
@@ -280,10 +291,10 @@ const StockfishEngine = (function() {
      */
     function getDepthForDifficulty(difficulty) {
         const depths = {
-            beginner: 3,
-            intermediate: 8,
-            advanced: 12,
-            master: 18
+            beginner: 5,
+            intermediate: 10,
+            advanced: 15,
+            master: 20
         };
         return depths[difficulty] || depths.intermediate;
     }
