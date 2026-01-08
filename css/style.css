@@ -586,3 +586,240 @@ footer a:hover {
         height: 15px;
     }
 }
+
+/* Game Mode Selector Styles */
+.modal-content.large {
+    max-width: 800px;
+    padding: 30px;
+}
+
+.game-mode-selector {
+    margin-bottom: 30px;
+}
+
+.game-mode-selector h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.mode-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.mode-btn {
+    padding: 20px 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.mode-btn:hover {
+    border-color: #3498db;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.mode-btn .mode-icon {
+    font-size: 2.5rem;
+}
+
+.mode-btn .mode-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.mode-btn .mode-desc {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Custom Configuration Styles */
+.custom-config {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid #eee;
+}
+
+.custom-config h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.player-config-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.player-config {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.player-config h4 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.config-group {
+    margin-bottom: 15px;
+}
+
+.config-group label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.provider-select,
+.difficulty-select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.provider-select:hover,
+.difficulty-select:hover,
+.provider-select:focus,
+.difficulty-select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.btn-large {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    min-width: 200px;
+}
+
+/* AI vs AI Controls */
+.ai-vs-ai-controls {
+    background: #f0f8ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.ai-vs-ai-controls h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.speed-control {
+    margin-bottom: 15px;
+}
+
+.speed-control label {
+    display: inline-block;
+    font-weight: 600;
+    color: #555;
+    margin-right: 10px;
+}
+
+.speed-control select {
+    padding: 8px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    background: white;
+    cursor: pointer;
+}
+
+.playback-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* Enhanced Move History with Tooltips */
+.move-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.move-item:hover {
+    background: #e8f4f8;
+}
+
+.move-item[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 5px;
+}
+
+/* Enhanced AI Thinking Indicator */
+.ai-thinking {
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-thinking .spinner {
+    display: inline-block;
+    animation: rotate 1s linear infinite;
+    font-size: 1.2rem;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive Design for New Elements */
+@media (max-width: 768px) {
+    .modal-content.large {
+        padding: 20px;
+        max-width: 95%;
+    }
+    
+    .player-config-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .mode-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Export PGN Button Styling */
+#export-pgn-btn {
+    margin-top: 10px;
+}
