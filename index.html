@@ -3,33 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game with Grok AI</title>
+    <title>Chess Game with AI Players</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Color Selection Modal -->
-    <div id="color-modal" class="modal">
-        <div class="modal-content">
-            <h2>Choose Your Color</h2>
-            <p>Select which side you want to play as:</p>
-            <div class="color-buttons">
-                <button id="choose-white" class="color-btn white-btn">
-                    <span class="piece-icon">♔</span>
-                    <span>Play as White</span>
-                    <span class="color-desc">You move first</span>
-                </button>
-                <button id="choose-black" class="color-btn black-btn">
-                    <span class="piece-icon">♚</span>
-                    <span>Play as Black</span>
-                    <span class="color-desc">AI moves first</span>
-                </button>
+    <!-- Game Setup Modal -->
+    <div id="setup-modal" class="modal show">
+        <div class="modal-content large">
+            <h2>Setup Chess Game</h2>
+            
+            <!-- Quick Start Modes -->
+            <div class="game-mode-selector">
+                <h3>Quick Start</h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn" data-mode="player-vs-stockfish">
+                        <span class="mode-icon">👤 vs 🤖</span>
+                        <span class="mode-title">Player vs Stockfish</span>
+                        <span class="mode-desc">Classic chess engine</span>
+                    </button>
+                    <button class="mode-btn" data-mode="player-vs-grok">
+                        <span class="mode-icon">👤 vs 🧠</span>
+                        <span class="mode-title">Player vs Grok AI</span>
+                        <span class="mode-desc">AI-powered opponent</span>
+                    </button>
+                    <button class="mode-btn" data-mode="stockfish-vs-grok">
+                        <span class="mode-icon">🤖 vs 🧠</span>
+                        <span class="mode-title">Stockfish vs Grok</span>
+                        <span class="mode-desc">Watch AI battle</span>
+                    </button>
+                    <button class="mode-btn" data-mode="custom">
+                        <span class="mode-icon">⚙️</span>
+                        <span class="mode-title">Custom Setup</span>
+                        <span class="mode-desc">Configure both sides</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Custom Configuration -->
+            <div id="custom-config" class="custom-config" style="display: none;">
+                <h3>Custom Configuration</h3>
+                
+                <div class="player-config-row">
+                    <div class="player-config">
+                        <h4>⚪ White Player</h4>
+                        <div class="config-group">
+                            <label for="white-provider">Player Type:</label>
+                            <select id="white-provider" class="provider-select">
+                                <option value="human">Human</option>
+                                <option value="stockfish">Stockfish</option>
+                                <option value="grok">Grok AI</option>
+                            </select>
+                        </div>
+                        <div class="config-group difficulty-group" id="white-difficulty-group" style="display: none;">
+                            <label for="white-difficulty">Difficulty:</label>
+                            <select id="white-difficulty" class="difficulty-select">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="master">Master</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="player-config">
+                        <h4>⚫ Black Player</h4>
+                        <div class="config-group">
+                            <label for="black-provider">Player Type:</label>
+                            <select id="black-provider" class="provider-select">
+                                <option value="human">Human</option>
+                                <option value="stockfish" selected>Stockfish</option>
+                                <option value="grok">Grok AI</option>
+                            </select>
+                        </div>
+                        <div class="config-group difficulty-group" id="black-difficulty-group">
+                            <label for="black-difficulty">Difficulty:</label>
+                            <select id="black-difficulty" class="difficulty-select">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate" selected>Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="master">Master</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="start-custom-game" class="btn btn-primary btn-large">Start Game</button>
             </div>
         </div>
     </div>
 
     <div class="container">
         <header>
-            <h1>♔ Chess Game with Grok AI ♚</h1>
+            <h1>♔ Chess Game with AI Players ♚</h1>
         </header>
         
         <div class="game-container">
@@ -49,9 +114,27 @@
                     </div>
                 </div>
                 
+                <div class="ai-vs-ai-controls" id="ai-vs-ai-controls" style="display: none;">
+                    <h3>AI vs AI Controls</h3>
+                    <div class="speed-control">
+                        <label for="ai-speed">Speed:</label>
+                        <select id="ai-speed">
+                            <option value="3000">Slow</option>
+                            <option value="1500" selected>Normal</option>
+                            <option value="500">Fast</option>
+                            <option value="100">Very Fast</option>
+                        </select>
+                    </div>
+                    <div class="playback-controls">
+                        <button id="pause-btn" class="btn btn-secondary">⏸ Pause</button>
+                        <button id="resume-btn" class="btn btn-secondary" style="display: none;">▶ Resume</button>
+                    </div>
+                </div>
+                
                 <div class="controls">
                     <button id="new-game-btn" class="btn btn-primary">New Game</button>
                     <button id="flip-board-btn" class="btn btn-secondary">Flip Board</button>
+                    <button id="export-pgn-btn" class="btn btn-secondary">Export PGN</button>
                     
                     <div class="history-controls">
                         <h3>History Navigation</h3>
@@ -76,7 +159,7 @@
         
         <footer>
             <p>Built with <a href="https://github.com/jhlywa/chess.js" target="_blank">chess.js</a> library</p>
-            <p>AI powered by Grok (xAI)</p>
+            <p>AI powered by Stockfish & Grok (xAI)</p>
         </footer>
     </div>
     
@@ -86,6 +169,9 @@
     <!-- Game modules -->
     <script src="js/board.js"></script>
     <script src="js/ai.js"></script>
-    <script src="js/game.js"></script>
+    <script src="js/stockfish-engine.js"></script>
+    <script src="js/ai-manager.js"></script>
+    <script src="js/game-controller.js"></script>
+    <script src="js/ui-controller.js"></script>
 </body>
 </html>
